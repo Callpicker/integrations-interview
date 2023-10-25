@@ -31,7 +31,6 @@ def checkusername(request):
 		else:
 			code = 200
 			message = user[0].username
-			print(user[0].username)
 			request.session["valid"] = True
 			request.session["username"] = message
 
@@ -62,14 +61,12 @@ def register(request):
 
 def more(request,isbn):
 	if request.session.get("valid",False):
-		r = requests.get('https://openlibrary.org/api/books?bibkeys=ISBN:'+str(isbn)+'&format=json&jscmd=details', params=request.GET)
-		result_json = r.json()
-		print(result_json['ISBN:'+str(isbn)])
-		title = result_json['ISBN:'+str(isbn)]['details']['title']
-		author = result_json['ISBN:'+str(isbn)]['details']['authors'][0]['name']
-		publish_date = result_json['ISBN:'+str(isbn)]['details']['publish_date']
-		if 'description' in result_json['ISBN:'+str(isbn)]['details']:
-			description = result_json['ISBN:'+str(isbn)]['details']['description']
+		r = get('https://openlibrary.org/api/books?bibkeys=ISBN:'+str(isbn)+'&format=xml&jscmd=details', params=request.GET)
+		title = r['ISBN:'+str(isbn)]['details']['title']
+		author = r['ISBN:'+str(isbn)]['details']['authors'][0]['name']
+		publish_date = r['ISBN:'+str(isbn)]['details']['publish_date']
+		if 'description' in r['ISBN:'+str(isbn)]['details']:
+			description = r['ISBN:'+str(isbn)]['details']['description']
 		else:
 			description = 'No Description'
 		return render(request,'more.html',{'title':title,'author':author,'publish_date':publish_date,'description':description,'isbn':isbn})
@@ -82,9 +79,8 @@ def mylist(request):
 		username = request.session.get("username",False)
 		if username:
 			user = models.Reader.objects.filter(username=username)
-			books = list(user[0].books.all().values())
-			print(books)
-			return render(request,'mylist.html',{'books':books})
+			books = user.books.all()
+			return render(request,'mylist.html',{})
 	else:
 		request.session.flush()
 		return redirect('login')
@@ -101,8 +97,6 @@ def addlist(request):
 			result_json = r.json()
 			title = result_json['ISBN:'+str(isbn)]['details']['title']
 			user = models.Reader.objects.filter(username=username)
-			print(isbn)
-			print(user[0])
 			book = models.Book(isbn=isbn,title=title)
 			book.save()
 			user[0].books.add(book)
