@@ -52,42 +52,54 @@
           <div class="d-flex flex-column flex-md-row align-items-center pb-3 mb-4 border-bottom">
             <a href="/" class="d-flex align-items-center text-dark text-decoration-none">
               <span class="material-icons" style="font-size: 60px; color:blueviolet;" >menu_book</span>
-              <span class="fs-4">Callpicker's Book Club</span>
+              <span class="fs-4">Callpicker's Book Club - {{ request.session.username }} </span>
             </a>
       
             <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto">
-              <a class="me-3 py-2 text-dark text-decoration-none" href="#">Home</a>
-              <a class="me-3 py-2 text-dark text-decoration-none" href="#">My List</a>
-              <a class="me-3 py-2 text-dark text-decoration-none" href="#">Logout</a>
+              <a class="me-3 py-2 text-dark text-decoration-none" href="/main">Home</a>
+              <a class="me-3 py-2 text-dark text-decoration-none" href="/mylist">My List</a>
+              <a class="me-3 py-2 text-dark text-decoration-none" href="/logout">Logout</a>
             </nav>
           </div>
         </header>
     </div>
-    <div class="container justify-content-center box-container">
-        <div class="row">
-            <div class="col">
-                <h1>{{ title }}</h1>
-            </div>
-        </div>
-       <div class="row">
-        <div class="col-6">
-            <ul>
-                <li>Author: {{ author }}</li>
-                <li>Published: {{ publish_date }}</li>
-                <li>Description: {{ description }}</li>
-            </ul>
-        </div>
-       </div>
+    <div class="container d-flex justify-content-center box-container">
+        <h1>Search</h1>
+    </div>
+    <div class="container d-flex justify-content-center box-container">
+        
+        <div class="input-group col-sm-7  input-group-lg">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text google"><img src="https://img.icons8.com/color/48/000000/google-logo.png"></span>
+                    </div>
+           <input type="text" class="form-control" v-on:keyup.enter="doSearch" v-model="q">
+                    <div class="input-group-append">
+                      <span class="input-group-text microphone"><img src="https://img.icons8.com/nolan/48/000000/microphone.png"></span>
+                    </div>
+         </div>
+      
 
-       <div class="row">
-        <div class="col">
-            <a href="/main" class="btn btn-primary">Back</a>
-        </div>
+   </div>
+   <div class="container d-flex justify-content-center box-container">
+    <div class="row">
+
+        <div class="col" v-for="(item,index) in results">
+            <div class="row">
+                <div class="card mb-3" style="width: 18rem;">
+                    <img class="card-img-top" :src="item.computed_cover" alt="Card image cap">
+                    <div class="card-body">
+                    <h5 class="card-title">[[ item.title ]]</h5>
+                    <h5 class="card-title">[[ (item.computed_author) ]]</h5>
+                    <p class="card-text"></p>
+                    <a  :href="'/more/' + item.computed_isbn" class="btn btn-primary">More</a>
+                    </div>
+                </div>
+            </div>
         </div>
 
     </div>
 
-    
+   </div>
 </section>
 </body>
 
@@ -95,3 +107,4 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+<script src="{% static 'app.js' %}"></script>
