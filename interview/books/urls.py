@@ -11,6 +11,6 @@ urlpatterns = [
 	path('main',views.main,name='main'),
 	path('mylist',views.mylist,name='mylist'),
 	path('addlist',views.addlist,name='addlist'),
-	path('more/<int:isbn>',views.more,name='more'),
+	path('more/<str:isbn>',views.more,name='more'),
 	
 ]
